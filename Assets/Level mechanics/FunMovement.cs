@@ -1,50 +1,78 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR;
+using UnityEngine.XR.Hands;
 
 public class FunMovement : MonoBehaviour
 {
-    public Transform leftHand;
-    public Transform rightHand;
     public Transform headTransform;
-
     public float moveSpeed = 1.5f;
     public float sensitivity = 1f;
     public float movementThreshold = 0.01f;
 
-    private Vector3 previousLeftPos;
-    private Vector3 previousRightPos;
+    private XRHandSubsystem handSubsystem;
+    private Vector3 previousLeftPalm;
+    private Vector3 previousRightPalm;
+    private bool hasPreviousData = false;
 
     void Start()
     {
-        if (leftHand == null || rightHand == null || headTransform == null)
-        {
-            Debug.LogError("Hand or Head transform not assigned!");
-            enabled = false;
-            return;
-        }
+        var subsystems = new List<XRHandSubsystem>();
+        SubsystemManager.GetSubsystems(subsystems);
 
-        previousLeftPos = leftHand.position;
-        previousRightPos = rightHand.position;
+        if (subsystems.Count > 0)
+        {
+            handSubsystem = subsystems[0];
+        }
+        else
+        {
+            Debug.LogError("XRHandSubsystem not found. Check your OpenXR settings.");
+        }
     }
 
     void Update()
     {
-        Vector3 leftVelocity = (leftHand.position - previousLeftPos) / Time.deltaTime;
-        Vector3 rightVelocity = (rightHand.position - previousRightPos) / Time.deltaTime;
+        if (handSubsystem == null || !handSubsystem.running)
+            return;
 
-        float averageVelocity = (leftVelocity.z + rightVelocity.z) * 0.5f;
+        XRHand leftHand = handSubsystem.leftHand;
+        XRHand rightHand = handSubsystem.rightHand;
 
-        Debug.Log($"Left Z: {leftVelocity.z}, Right Z: {rightVelocity.z}, Avg: {averageVelocity}");
-
-        if (Mathf.Abs(averageVelocity) > movementThreshold)
+        if (!leftHand.isTracked || !rightHand.isTracked)
         {
-            Vector3 moveDirection = new Vector3(headTransform.forward.x, 0, headTransform.forward.z).normalized;
-            transform.position += moveDirection * averageVelocity * moveSpeed * sensitivity * Time.deltaTime;
-
-            Debug.Log("Moving in direction: " + moveDirection);
+            hasPreviousData = false;
+            return;
         }
 
-        previousLeftPos = leftHand.position;
-        previousRightPos = rightHand.position;
+        XRHandJoint leftPalmJoint = leftHand.GetJoint(XRHandJointID.Palm);
+        XRHandJoint rightPalmJoint = rightHand.GetJoint(XRHandJointID.Palm);
+
+        if (!leftPalmJoint.TryGetPose(out Pose leftPalmPose) || !rightPalmJoint.TryGetPose(out Pose rightPalmPose))
+            return;
+
+        Vector3 leftPalm = leftPalmPose.position;
+        Vector3 rightPalm = rightPalmPose.position;
+
+        if (!hasPreviousData)
+        {
+            previousLeftPalm = leftPalm;
+            previousRightPalm = rightPalm;
+            hasPreviousData = true;
+            return;
+        }
+
+        // Calculate movement intensity (total swing amount)
+        Vector3 leftDelta = leftPalm - previousLeftPalm;
+        Vector3 rightDelta = rightPalm - previousRightPalm;
+
+        float swingIntensity = (leftDelta.magnitude + rightDelta.magnitude) * 0.5f;
+
+        if (swingIntensity > movementThreshold)
+        {
+            Vector3 moveDirection = new Vector3(headTransform.forward.x, 0, headTransform.forward.z).normalized;
+            transform.position += moveDirection * swingIntensity * moveSpeed * sensitivity * Time.deltaTime;
+        }
+
+        previousLeftPalm = leftPalm;
+        previousRightPalm = rightPalm;
     }
 }
