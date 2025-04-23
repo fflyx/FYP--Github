@@ -2,30 +2,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Hands;
 
-public class FunMovement : MonoBehaviour
+public class SmoothArmSwingMovement : MonoBehaviour
 {
     public Transform headTransform;
     public float moveSpeed = 1.5f;
     public float sensitivity = 1f;
     public float movementThreshold = 0.01f;
+    public float smoothingFactor = 0.1f; // Smaller = smoother
 
     private XRHandSubsystem handSubsystem;
     private Vector3 previousLeftPalm;
     private Vector3 previousRightPalm;
     private bool hasPreviousData = false;
 
+    private float smoothedSwingIntensity = 0f;
+
     void Start()
     {
         var subsystems = new List<XRHandSubsystem>();
         SubsystemManager.GetSubsystems(subsystems);
-
         if (subsystems.Count > 0)
         {
             handSubsystem = subsystems[0];
         }
         else
         {
-            Debug.LogError("XRHandSubsystem not found. Check your OpenXR settings.");
+            Debug.LogError("XRHandSubsystem not found.");
         }
     }
 
@@ -40,6 +42,7 @@ public class FunMovement : MonoBehaviour
         if (!leftHand.isTracked || !rightHand.isTracked)
         {
             hasPreviousData = false;
+            smoothedSwingIntensity = Mathf.Lerp(smoothedSwingIntensity, 0, Time.deltaTime * 5f); // smooth stop
             return;
         }
 
@@ -60,19 +63,23 @@ public class FunMovement : MonoBehaviour
             return;
         }
 
-        // Calculate movement intensity (total swing amount)
         Vector3 leftDelta = leftPalm - previousLeftPalm;
         Vector3 rightDelta = rightPalm - previousRightPalm;
 
-        float swingIntensity = (leftDelta.magnitude + rightDelta.magnitude) * 0.5f;
+        float rawSwingIntensity = (leftDelta.magnitude + rightDelta.magnitude) * 0.5f;
 
-        if (swingIntensity > movementThreshold)
+        // Smooth the swing
+        smoothedSwingIntensity = Mathf.Lerp(smoothedSwingIntensity, rawSwingIntensity, smoothingFactor);
+
+        if (smoothedSwingIntensity > movementThreshold)
         {
             Vector3 moveDirection = new Vector3(headTransform.forward.x, 0, headTransform.forward.z).normalized;
-            transform.position += moveDirection * swingIntensity * moveSpeed * sensitivity * Time.deltaTime;
+            transform.position += moveDirection * smoothedSwingIntensity * moveSpeed * sensitivity * Time.deltaTime;
         }
 
         previousLeftPalm = leftPalm;
         previousRightPalm = rightPalm;
+
+        Debug.Log($"Smoothed Intensity: {smoothedSwingIntensity:F4}");
     }
 }
