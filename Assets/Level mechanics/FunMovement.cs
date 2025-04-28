@@ -8,7 +8,7 @@ public class SmoothArmSwingMovement : MonoBehaviour
     public float moveSpeed = 1.5f;
     public float sensitivity = 1f;
     public float movementThreshold = 0.01f;
-    public float smoothingFactor = 0.1f; // Smaller = smoother
+    public float smoothingFactor = 0.1f; 
 
     private XRHandSubsystem handSubsystem;
     private Vector3 previousLeftPalm;
@@ -42,7 +42,7 @@ public class SmoothArmSwingMovement : MonoBehaviour
         if (!leftHand.isTracked || !rightHand.isTracked)
         {
             hasPreviousData = false;
-            smoothedSwingIntensity = Mathf.Lerp(smoothedSwingIntensity, 0, Time.deltaTime * 5f); // smooth stop
+            smoothedSwingIntensity = Mathf.Lerp(smoothedSwingIntensity, 0, Time.deltaTime * 5f); 
             return;
         }
 
