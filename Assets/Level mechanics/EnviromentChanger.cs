@@ -3,9 +3,16 @@ using UnityEngine;
 public class EnvironmentChanger : MonoBehaviour
 {
     public GameObject[] propsToToggle;
-    public Light hallwayLight;
-    public Light hallwayLight2;
-    public Light hallwayLight3;
+    public Light[] hallwayLights;
+    
+    public int loopCount = 0;
+
+    public void LoopNumber()
+    {
+        loopCount++;
+        Debug.Log("Loop #" + loopCount);
+        OnNewLoop(loopCount);
+    }
     public void OnNewLoop(int loopCount)
     {
         Debug.Log($"Loop {loopCount} entered!");
@@ -20,8 +27,10 @@ public class EnvironmentChanger : MonoBehaviour
 
         else if (loopCount == 2)
         {
-            
-            hallwayLight.intensity = 0.2f;
+            foreach (Light light in hallwayLights)
+            {
+                light.intensity = 0.2f;
+            }
             RenderSettings.fogDensity = 0.25f;
         }
         else if (loopCount == 3)
@@ -36,10 +45,11 @@ public class EnvironmentChanger : MonoBehaviour
         }
         else if (loopCount == 5)
         {
-
-            hallwayLight.enabled = false;
-            hallwayLight2.enabled = false;
-            hallwayLight3.enabled = false;
+            foreach (Light light in hallwayLights)
+            {
+                light.enabled = false;
+            }
+            
         }
     }
 }

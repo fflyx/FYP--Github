@@ -22,6 +22,12 @@ public class LoopHallway : MonoBehaviour
 
             if (cc != null) cc.enabled = true;
 
+            EnvironmentChanger fartlightstuff = Object.FindFirstObjectByType<EnvironmentChanger>();
+            if (fartlightstuff != null)
+            {
+                fartlightstuff.LoopNumber();
+            }
+
             Debug.Log($"{gameObject.name} teleported the player!");
 
             if (isForwardTeleporter && otherTeleporter != null)

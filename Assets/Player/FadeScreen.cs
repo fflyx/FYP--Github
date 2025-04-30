@@ -4,13 +4,13 @@ using System.Collections;
 
 public class FadeScreen : MonoBehaviour
 {
-    public Image fadeImage; // Drag your black Image here
+    public Image fadeImage; 
     public float fadeDuration = 0.5f;
 
     private void Awake()
     {
         if (fadeImage != null)
-            fadeImage.color = new Color(0, 0, 0, 0); // Start fully transparent
+            fadeImage.color = new Color(0, 0, 0, 0); 
     }
 
     public void FadeOutAndIn(System.Action duringFadeAction)
@@ -20,11 +20,11 @@ public class FadeScreen : MonoBehaviour
 
     private IEnumerator FadeRoutine(System.Action duringFadeAction)
     {
-        yield return StartCoroutine(Fade(0, 1)); // Fade to black
+        yield return StartCoroutine(Fade(0, 1)); 
 
-        duringFadeAction?.Invoke(); // Perform teleport while black
+        duringFadeAction?.Invoke(); 
 
-        yield return StartCoroutine(Fade(1, 0)); // Fade back to normal
+        yield return StartCoroutine(Fade(1, 0)); 
     }
 
     private IEnumerator Fade(float startAlpha, float endAlpha)
