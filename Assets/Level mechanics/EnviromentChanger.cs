@@ -1,12 +1,31 @@
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class EnvironmentChanger : MonoBehaviour
 {
     public GameObject[] propsToToggle;
     public Light[] hallwayLights;
-    
+    public GameObject enemyPrefab;
+    public Transform enemySpawnPoint;
+    private GameObject enemyInstance;
+    private bool hasSpawnedLoop3 = false;
     public int loopCount = 0;
 
+
+    void SpawnEnemy(bool temporary)
+    {
+        if (enemyInstance == null)
+        {
+            enemyInstance = Instantiate(enemyPrefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
+        }
+        else
+        {
+            enemyInstance.transform.position = enemySpawnPoint.position;
+            enemyInstance.SetActive(true);
+        }
+
+        enemyInstance.GetComponent<EnemyBehaviour>().SetupTemporary(temporary);
+    }
     public void LoopNumber()
     {
         loopCount++;
@@ -33,11 +52,13 @@ public class EnvironmentChanger : MonoBehaviour
             }
             RenderSettings.fogDensity = 0.25f;
         }
-        else if (loopCount == 3)
+        else if (loopCount == 3 && !hasSpawnedLoop3)
         {
             
             if (propsToToggle.Length > 0)
             {
+                SpawnEnemy(temporary: true);
+                hasSpawnedLoop3 = true;
                 propsToToggle[0].SetActive(false);
                 RenderSettings.fogColor = new Color(0.05f, 0.05f, 0.1f); 
                 RenderSettings.fogDensity = 0.5f;
