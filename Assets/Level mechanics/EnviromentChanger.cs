@@ -62,12 +62,14 @@ public class EnvironmentChanger : MonoBehaviour
                 SpawnEnemy(temporary: true);
                 hasSpawnedLoop3 = true;
                 propsToToggle[0].SetActive(false);
-                RenderSettings.fogColor = new Color(0.05f, 0.05f, 0.1f);
-                RenderSettings.fogDensity = 0.5f;
+                
             }
         }
         else if (loopCount == 5 && !hasSpawnedLoop5)
         {
+            RenderSettings.fogColor = new Color(0.05f, 0.05f, 0.1f);
+            RenderSettings.fogDensity = 0.5f;
+
             SpawnEnemy(temporary: false);
             enemyInstance.GetComponent<EnemyBehaviour>().mode = EnemyBehaviour.EnemyMode.ChaseWhenUnseen;
             hasSpawnedLoop5 = true;
