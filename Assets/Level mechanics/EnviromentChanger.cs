@@ -9,6 +9,7 @@ public class EnvironmentChanger : MonoBehaviour
     public Transform enemySpawnPoint;
     private GameObject enemyInstance;
     private bool hasSpawnedLoop3 = false;
+    private bool hasSpawnedLoop5 = false;
     public int loopCount = 0;
 
 
@@ -24,8 +25,9 @@ public class EnvironmentChanger : MonoBehaviour
             enemyInstance.SetActive(true);
         }
 
-        enemyInstance.GetComponent<EnemyBehaviour>().SetupTemporary(temporary);
+        enemyInstance.GetComponent<EnemyBehaviour>().mode = EnemyBehaviour.EnemyMode.PassiveDisappear;
     }
+ 
     public void LoopNumber()
     {
         loopCount++;
@@ -38,7 +40,7 @@ public class EnvironmentChanger : MonoBehaviour
 
         if (loopCount == 1)
         {
-            
+
             RenderSettings.fog = true;
             RenderSettings.fogColor = Color.gray;
             RenderSettings.fogDensity = 0.1f;
@@ -54,23 +56,27 @@ public class EnvironmentChanger : MonoBehaviour
         }
         else if (loopCount == 3 && !hasSpawnedLoop3)
         {
-            
+
             if (propsToToggle.Length > 0)
             {
                 SpawnEnemy(temporary: true);
                 hasSpawnedLoop3 = true;
                 propsToToggle[0].SetActive(false);
-                RenderSettings.fogColor = new Color(0.05f, 0.05f, 0.1f); 
+                RenderSettings.fogColor = new Color(0.05f, 0.05f, 0.1f);
                 RenderSettings.fogDensity = 0.5f;
             }
         }
-        else if (loopCount == 5)
+        else if (loopCount == 5 && !hasSpawnedLoop5)
         {
+            SpawnEnemy(temporary: false);
+            enemyInstance.GetComponent<EnemyBehaviour>().mode = EnemyBehaviour.EnemyMode.ChaseWhenUnseen;
+            hasSpawnedLoop5 = true;
             foreach (Light light in hallwayLights)
             {
                 light.enabled = false;
             }
-            
+
         }
+
     }
 }

@@ -1,0 +1,5 @@
+E:/Assignemnt/FYP/Unity Proj/FYP--Github/.utmp/RelWithDebInfo/5y304k4g/arm64-v8a/CMakeFiles/edit_cache.dir
+E:/Assignemnt/FYP/Unity Proj/FYP--Github/.utmp/RelWithDebInfo/5y304k4g/arm64-v8a/CMakeFiles/rebuild_cache.dir
+E:/Assignemnt/FYP/Unity Proj/FYP--Github/.utmp/RelWithDebInfo/5y304k4g/arm64-v8a/GameActivity/CMakeFiles/game.dir
+E:/Assignemnt/FYP/Unity Proj/FYP--Github/.utmp/RelWithDebInfo/5y304k4g/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+E:/Assignemnt/FYP/Unity Proj/FYP--Github/.utmp/RelWithDebInfo/5y304k4g/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

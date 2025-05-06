@@ -1,26 +1,27 @@
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using System.Collections;
 using UnityEngine;
-using Unity.AI.Navigation;
+
 public class EnemyBehaviour : MonoBehaviour
 {
-    public Transform player;
-    public float chaseSpeed = 3f;
-    public float detectionDistance = 30f;
-    private bool isTemporary = false;
-    private float visibleTimer = 3f;
-    private bool hasBeenSeen = false;
+    public enum EnemyMode { PassiveDisappear, ChaseWhenUnseen }
 
-    private EnvironmentChanger stinkJuice;
-    private bool isChasing = false;
+    [Header("General Settings")]
+    public EnemyMode mode = EnemyMode.PassiveDisappear;
+    public Transform player;
+    public float detectionDistance = 30f;
+
+    [Header("Chase Settings")]
+    public float chaseSpeed = 3f;
+
+    [Header("Disappear Settings")]
+    public float visibleDuration = 3f;
+
+    private bool isSeen = false;
+    private Coroutine disappearCoroutine;
 
     void Start()
     {
-        stinkJuice = Object.FindFirstObjectByType<EnvironmentChanger>();
-
-        if (player == null)
-
+        if (player == null && Camera.main != null)
         {
             player = Camera.main.transform;
         }
@@ -28,66 +29,59 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Update()
     {
-        if (isTemporary && !hasBeenSeen && IsVisibleToPlayer())
-        {
-            hasBeenSeen = true;
-            StartCoroutine(DisappearAfterDelay());
-        }
+        Debug.Log("Enemy Update running - Mode: " + mode);
 
-        if (!isTemporary)
-        {
-            ChasePlayer();
-        }
-        if (stinkJuice == null) return;
+        if (player == null) return;
 
-        int currentLoop = stinkJuice.loopCount;
+        bool visible = IsVisibleToPlayer();
+        Debug.Log("Enemy Visible: " + visible);
 
-        if (currentLoop < 3)
+        switch (mode)
         {
-            IdleBehaviour();
-        }
-        else if (currentLoop >= 5)
-        {
-            ChasePlayer();
+            case EnemyMode.PassiveDisappear:
+                if (visible && !isSeen)
+                {
+                    isSeen = true;
+                    disappearCoroutine = StartCoroutine(DisappearAfterSeen());
+                }
+                break;
+
+            case EnemyMode.ChaseWhenUnseen:
+                if (!visible)
+                {
+                    ChasePlayer();
+                }
+                break;
         }
     }
 
-    void IdleBehaviour()
+    IEnumerator DisappearAfterSeen()
     {
-        isChasing = false;
+        yield return new WaitForSeconds(visibleDuration);
+        gameObject.SetActive(false);
     }
 
     void ChasePlayer()
     {
-        isTemporary = false;
-        isChasing = true;
-
+        Vector3 direction = (player.position - transform.position).normalized;
         float step = chaseSpeed * Time.deltaTime;
-        transform.LookAt(player); 
-        transform.position = Vector3.MoveTowards(transform.position, player.position, step);
-    }
-    public void SetupTemporary(bool temporary)
-    {
-        isTemporary = temporary;
-        hasBeenSeen = false;
+        transform.position += direction * step;
+        transform.LookAt(player);
     }
 
-    IEnumerator DisappearAfterDelay()
-    {
-        yield return new WaitForSeconds(visibleTimer);
-        gameObject.SetActive(false);
-    }
     bool IsVisibleToPlayer()
     {
-        if (Camera.main == null) return false;
-
+        if (Camera.main == null)
+        {
+            Debug.LogWarning("Camera.main is null!");
+            return false;
+        }
         Vector3 toEnemy = transform.position - Camera.main.transform.position;
         float angle = Vector3.Angle(Camera.main.transform.forward, toEnemy);
 
-        // Field of view check (e.g. 60° cone)
-        if (angle > 60f) return false;
+        // Test cone: 90° field of view
+        if (angle > 90f) return false;
 
-        // Raycast to ensure there's no wall blocking line of sight
         Ray ray = new Ray(Camera.main.transform.position, toEnemy.normalized);
         if (Physics.Raycast(ray, out RaycastHit hit, toEnemy.magnitude))
         {
@@ -95,6 +89,6 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         return true;
+
     }
 }
-
