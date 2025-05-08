@@ -1,9 +1,11 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyBehaviour : MonoBehaviour
 {
     public enum EnemyMode { PassiveDisappear, ChaseWhenUnseen }
+    private NavMeshAgent navMeshAgent;
 
     [Header("General Settings")]
     public EnemyMode mode = EnemyMode.PassiveDisappear;
@@ -21,6 +23,8 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Start()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+
         if (player == null && Camera.main != null)
         {
             player = Camera.main.transform;
@@ -63,10 +67,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     void ChasePlayer()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
-        float step = chaseSpeed * Time.deltaTime;
-        transform.position += direction * step;
-        transform.LookAt(player);
+        if (navMeshAgent != null && player != null)
+        {
+            navMeshAgent.SetDestination(player.position);
+        }
     }
 
     bool IsVisibleToPlayer()

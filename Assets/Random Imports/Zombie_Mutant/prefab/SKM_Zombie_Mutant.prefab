@@ -783,6 +783,7 @@ GameObject:
   - component: {fileID: 7489085958088657696}
   - component: {fileID: 2146146459913728376}
   - component: {fileID: 7876102084941979077}
+  - component: {fileID: -6602226770016376735}
   m_Layer: 0
   m_Name: SKM_Zombie_Mutant
   m_TagString: Untagged
@@ -868,6 +869,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!195 &-6602226770016376735
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198877092734045152}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 1
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &4295295734395379592
 GameObject:
   m_ObjectHideFlags: 0
