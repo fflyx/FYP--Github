@@ -67,9 +67,15 @@ public class EnemyBehaviour : MonoBehaviour
 
     void ChasePlayer()
     {
-        if (navMeshAgent != null && player != null)
+        if (IsVisibleToPlayer())
         {
-            navMeshAgent.SetDestination(player.position);
+            StopChase();
+            return;
+        }
+
+        if (navMeshAgent != null && Camera.main != null)
+        {
+            navMeshAgent.SetDestination(Camera.main.transform.position);
         }
     }
 
@@ -94,5 +100,13 @@ public class EnemyBehaviour : MonoBehaviour
 
         return true;
 
+    }
+
+    void StopChase()
+    {
+        if (navMeshAgent != null)
+        {
+            navMeshAgent.ResetPath();
+        }
     }
 }

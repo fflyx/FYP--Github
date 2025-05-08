@@ -7339,7 +7339,7 @@ MonoBehaviour:
   m_InteractionManager: {fileID: 1496759235}
   m_Colliders: []
   m_InteractionLayers:
-    m_Bits: 1
+    m_Bits: 4294967295
   m_DistanceCalculationMode: 1
   m_SelectMode: 0
   m_FocusMode: 1
@@ -18378,7 +18378,7 @@ MonoBehaviour:
   - {fileID: 456664545}
   enemyPrefab: {fileID: 4198877092734045152, guid: f4764a21bb3a8ca4084c8a31149ab67f, type: 3}
   enemySpawnPoint: {fileID: 1808147472}
-  loopCount: 0
+  loopCount: 5
 --- !u!4 &1938363979
 Transform:
   m_ObjectHideFlags: 0
