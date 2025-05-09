@@ -1,0 +1,7 @@
+Read ME
+
+Unity VR game
+build is android developed using meta quest 2
+Requires Meta headset to run
+source code packaged into segments need to be brought together
+Just add assets and Library into Felix_Kinnear_GamesDesign_Source
