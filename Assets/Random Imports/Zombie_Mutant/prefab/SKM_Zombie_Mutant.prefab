@@ -844,13 +844,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25592d73583b1047b8b32e442b39f87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpscareDistance: 13
+  jumpscareDelay: 0
+  jumpscareDistance: 5
   jumpscareSound: {fileID: 8300000, guid: 55920c6dd245d5842a7a3783e7b887b8, type: 3}
   mode: 0
   player: {fileID: 1750559194818070043, guid: b62f526b27470a64ba027c270a36321d, type: 3}
-  detectionDistance: 80
-  chaseSpeed: 3
-  visibleDuration: 3
+  detectionDistance: 40
+  chaseSpeed: 2
+  visibleDuration: 4
 --- !u!65 &7876102084941979077
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -882,8 +883,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Speed: 2
+  m_Acceleration: 3
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
