@@ -22,6 +22,6 @@ public class GameOver : MonoBehaviour
     IEnumerator GameOverAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        SceneManager.LoadScene("GameOverScene"); // Make sure this scene exists in Build Settings
+        SceneManager.LoadScene("GameOverScene"); 
     }
 }

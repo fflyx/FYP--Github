@@ -62,13 +62,13 @@ public class EnvironmentChanger : MonoBehaviour
     {
         if (propsToToggle.Length > 0)
         {
-            // Disable the first prop when loopCount reaches 3
-            propsToToggle[0].SetActive(false); // Disable prop
+            
+            propsToToggle[0].SetActive(false); 
 
-            // Example: You could also enable others or disable more props if needed
+            
             for (int i = 1; i < propsToToggle.Length; i++)
             {
-                propsToToggle[i].SetActive(true); // Enable props after loop 3
+                propsToToggle[i].SetActive(true); 
             }
         }
     }
@@ -111,8 +111,9 @@ public class EnvironmentChanger : MonoBehaviour
             }
             RenderSettings.fogDensity = 0.15f;
         }
-        else if (loopCount == 3 && !hasSpawnedLoop3)
+        else if (loopCount == 3 && !hasSpawnedLoop3 && !keySpawned)
         {
+            SpawnKey();
             playAudio();
             audioSource.PlayOneShot(spawnSound);
             SpawnEnemy(temporary: true); 
@@ -120,15 +121,7 @@ public class EnvironmentChanger : MonoBehaviour
             ToggleProps();
        
         }
-        else if (loopCount == loopkeySpawn && !keySpawned)
-        {
-            playAudio();
-            audioSource.PlayOneShot(spawnSound);
-            SpawnKey();
-            Debug.Log("keyspawned");
-            keySpawned = true;
-        }
-
+        
         else if (loopCount == 5 && !hasSpawnedLoop5)
         {
             playAudio();

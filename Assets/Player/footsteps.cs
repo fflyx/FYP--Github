@@ -4,7 +4,7 @@ using UnityEngine;
 public class FootstepAudio : MonoBehaviour
 {
     public AudioClip footstepClip;
-    public float stepRate = 0.5f; // Time between steps in seconds
+    public float stepRate = 0.5f; 
 
     private AudioSource audioSource;
     private CharacterController controller;
