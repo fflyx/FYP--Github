@@ -1,12 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.SceneManagement;
 public class EnemyBehaviour : MonoBehaviour
 {
-    private GameOver deadahhjit;
-
-    public float jumpscareDistance = 2f;
+    public float jumpscareDelay = 3f;
+    public float jumpscareDistance = 13f;
     public AudioClip jumpscareSound;
     private AudioSource audioSource;
     private bool hasScared = false;
@@ -40,8 +39,6 @@ public class EnemyBehaviour : MonoBehaviour
         {
             player = Camera.main.transform;
         }
-
-        deadahhjit = Object.FindFirstObjectByType<GameOver>();
     }
 
     void Update()
@@ -92,12 +89,21 @@ public class EnemyBehaviour : MonoBehaviour
             return;
         }
 
+        float distance = Vector3.Distance(transform.position, player.position);
+        Debug.Log("Distance to Player: " + distance);  // Log distance to see if the enemy is getting close enough
+
+        // If the distance is within the jumpscare range and the enemy is not yet seen
+        if (distance <= jumpscareDistance && !hasScared)
+        {
+            Jumpscare();
+        }
+
         if (navMeshAgent != null && Camera.main != null)
         {
             navMeshAgent.SetDestination(Camera.main.transform.position);
         }
     }
-    void Jumpscare()
+    IEnumerator Jumpscare()
     {
         hasScared = true;
 
@@ -109,13 +115,13 @@ public class EnemyBehaviour : MonoBehaviour
         Debug.Log("Jumpscare!");
 
         navMeshAgent.ResetPath();
+        yield return new WaitForSeconds(jumpscareDelay);
 
-        if (deadahhjit != null)
-        {
-            deadahhjit.ShowGameOverScreen();
-        }
+        GameOver.Instance.TriggerGameOver();
+        TriggerGameOver();
         StartCoroutine(DisableAfterDelay(2f));
     }
+
     IEnumerator DisableAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -144,6 +150,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     }
 
+    void TriggerGameOver()
+    {
+        GameOver.Instance.TriggerGameOver();
+    }
     void StopChase()
     {
         if (navMeshAgent != null)

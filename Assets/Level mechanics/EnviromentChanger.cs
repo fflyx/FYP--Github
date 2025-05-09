@@ -50,9 +50,9 @@ public class EnvironmentChanger : MonoBehaviour
         {
             foreach (Light light in hallwayLights)
             {
-                light.intensity = 0.2f;
+                light.intensity = 0.4f;
             }
-            RenderSettings.fogDensity = 0.25f;
+            RenderSettings.fogDensity = 0.15f;
         }
         else if (loopCount == 3 && !hasSpawnedLoop3)
         {
@@ -62,23 +62,30 @@ public class EnvironmentChanger : MonoBehaviour
                 SpawnEnemy(temporary: true);
                 hasSpawnedLoop3 = true;
                 propsToToggle[0].SetActive(false);
-                
+
             }
         }
         else if (loopCount == 5 && !hasSpawnedLoop5)
         {
             RenderSettings.fogColor = new Color(0.05f, 0.05f, 0.1f);
-            RenderSettings.fogDensity = 0.5f;
+            RenderSettings.fogDensity = 0.2f;
 
             SpawnEnemy(temporary: false);
             enemyInstance.GetComponent<EnemyBehaviour>().mode = EnemyBehaviour.EnemyMode.ChaseWhenUnseen;
             hasSpawnedLoop5 = true;
             foreach (Light light in hallwayLights)
             {
-                light.enabled = false;
+                light.color = new Color(1f, 0f, 0f);
+                light.intensity = 1f;
             }
-
         }
 
+        else if (loopCount == 6)
+        {
+            foreach (Light light in hallwayLights)
+            {
+                light.enabled = false;
+            }
+        }
     }
 }

@@ -1,36 +1,27 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Required for scene management
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameOver : MonoBehaviour
 {
-    public GameObject gameOverScreen;
-    public Button restartButton;
-    public Button quitButton;
+    public static GameOver Instance;
 
-    void Start()
+    void Awake()
     {
-        gameOverScreen.SetActive(false);  // Hide the game over screen at the start
-        restartButton.onClick.AddListener(RestartGame);
-        quitButton.onClick.AddListener(QuitGame);
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
     }
 
-    // Call this method when the player dies (triggered from another script)
-    public void ShowGameOverScreen()
+    public void TriggerGameOver(float delay = 3f)
     {
-        gameOverScreen.SetActive(true);
-        Time.timeScale = 0f;  // Pause the game
+        StartCoroutine(GameOverAfterDelay(delay));
     }
 
-    void RestartGame()
+    IEnumerator GameOverAfterDelay(float delay)
     {
-        Time.timeScale = 1f;  // Unpause the game
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);  // Reload the current scene
-    }
-
-    void QuitGame()
-    {
-        Time.timeScale = 1f;  // Unpause the game
-        Application.Quit();  // Quit the game
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene("GameOverScene"); // Make sure this scene exists in Build Settings
     }
 }
