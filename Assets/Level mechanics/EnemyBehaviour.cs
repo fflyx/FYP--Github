@@ -4,6 +4,13 @@ using UnityEngine.AI;
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    private GameOver deadahhjit;
+
+    public float jumpscareDistance = 2f;
+    public AudioClip jumpscareSound;
+    private AudioSource audioSource;
+    private bool hasScared = false;
+
     public enum EnemyMode { PassiveDisappear, ChaseWhenUnseen }
     private NavMeshAgent navMeshAgent;
 
@@ -23,12 +30,18 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Start()
     {
+        if (player == null)
+            player = Camera.main.transform;
+
+        audioSource = GetComponent<AudioSource>();
         navMeshAgent = GetComponent<NavMeshAgent>();
 
         if (player == null && Camera.main != null)
         {
             player = Camera.main.transform;
         }
+
+        deadahhjit = Object.FindFirstObjectByType<GameOver>();
     }
 
     void Update()
@@ -54,6 +67,12 @@ public class EnemyBehaviour : MonoBehaviour
                 if (!visible)
                 {
                     ChasePlayer();
+
+                    float distance = Vector3.Distance(transform.position, player.position);
+                    if (distance <= jumpscareDistance && !hasScared)
+                    {
+                        Jumpscare();
+                    }
                 }
                 break;
         }
@@ -78,7 +97,30 @@ public class EnemyBehaviour : MonoBehaviour
             navMeshAgent.SetDestination(Camera.main.transform.position);
         }
     }
+    void Jumpscare()
+    {
+        hasScared = true;
 
+        if (audioSource != null && jumpscareSound != null)
+        {
+            audioSource.PlayOneShot(jumpscareSound);
+        }
+
+        Debug.Log("Jumpscare!");
+
+        navMeshAgent.ResetPath();
+
+        if (deadahhjit != null)
+        {
+            deadahhjit.ShowGameOverScreen();
+        }
+        StartCoroutine(DisableAfterDelay(2f));
+    }
+    IEnumerator DisableAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        gameObject.SetActive(false);
+    }
     bool IsVisibleToPlayer()
     {
         if (Camera.main == null)
@@ -89,8 +131,8 @@ public class EnemyBehaviour : MonoBehaviour
         Vector3 toEnemy = transform.position - Camera.main.transform.position;
         float angle = Vector3.Angle(Camera.main.transform.forward, toEnemy);
 
-        // Test cone: 90° field of view
-        if (angle > 90f) return false;
+       
+        if (angle > 85f) return false;
 
         Ray ray = new Ray(Camera.main.transform.position, toEnemy.normalized);
         if (Physics.Raycast(ray, out RaycastHit hit, toEnemy.magnitude))
